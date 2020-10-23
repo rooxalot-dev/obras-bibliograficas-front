@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { Title } from '@angular/platform-browser';
+import { Subject } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -6,5 +8,14 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'obras-bibliograficas';
+  title = 'Obras Bibliográficas';
+  menuSubject$ = new Subject();
+
+  constructor (private titleService: Title) {
+    titleService.setTitle(this.title);
+  }
+
+  toogleMenu() {
+    this.menuSubject$.next(true);
+  }
 }
