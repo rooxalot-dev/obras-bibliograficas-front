@@ -1,13 +1,13 @@
 <div mat-dialog-title class="dialog-title">
   <h2>Adicionar Autores</h2>
-  <a class="close-button" mat-dialog-close>
+  <a class="close-button" (click)="close()">
     <mat-icon>close</mat-icon>
   </a>
 </div>
 
 <mat-dialog-content class="mat-typography">
   <mat-horizontal-stepper [linear]="true" #stepper>
-    <mat-step>
+    <mat-step [stepControl]="authorsCount">
       <ng-template matStepLabel
         >Informe quantos autores serão cadastrados</ng-template
       >
@@ -20,9 +20,6 @@
           placeholder="Quantos autores serão cadastrados?"
         />
       </mat-form-field>
-      <div>
-        <button mat-button (click)="nextStep()">Próximo</button>
-      </div>
     </mat-step>
 
     <mat-step>
@@ -35,25 +32,21 @@
               <input matInput [formControl]="authorForm.controls[i]" />
           </mat-form-field>
         </div>
-        <div>
-          <button mat-button matStepperPrevious>Anterior</button>
-          <button mat-button (click)="nextStep()">Próximo</button>
-        </div>
       </form>
     </mat-step>
 
     <mat-step>
       <ng-template matStepLabel>Revise</ng-template>
-      <div *ngFor="let authorControl of authorForm.controls; index as i">
-        <span> Autor {{ i + 1 }} - {{ authorForm.controls[i].value }}</span>
-      </div>
-      <div>
-        <button mat-button matStepperPrevious>Anterior</button>
-        <button mat-button (click)="nextStep()">Concluir</button>
-        <button mat-button (click)="stepper.reset()">Reset</button>
+      <div class="registred-author" *ngFor="let authorControl of authorForm.controls; index as i">
+        <span> Autor {{ i + 1 }}: {{ authorForm.controls[i].value }}</span>
       </div>
     </mat-step>
   </mat-horizontal-stepper>
 </mat-dialog-content>
 
-<mat-dialog-actions align="end"> </mat-dialog-actions>
+<mat-dialog-actions align="end">
+    <div>
+      <button mat-button *ngIf="stepper.selectedIndex > 0" (click)="previousStep()">Anterior</button>
+      <button mat-button (click)="nextStep()">{{ stepper.selectedIndex < 2 ? 'Próximo' : 'Concluir' }}</button>
+    </div>
+</mat-dialog-actions>

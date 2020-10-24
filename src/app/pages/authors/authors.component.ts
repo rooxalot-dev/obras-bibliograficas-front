@@ -3,6 +3,7 @@ import IAuthor from 'src/app/models/IAuthor';
 import { MatDialog } from '@angular/material/dialog';
 import { AddAuthorDialogComponent } from 'src/app/components/add-author-dialog/add-author-dialog.component';
 import { AuthorService } from 'src/app/services/author.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-authors',
@@ -17,6 +18,7 @@ export class AuthorsComponent implements OnInit {
 
   constructor(
     public authorsService: AuthorService,
+    public toastr: ToastrService,
     public dialog: MatDialog) { }
 
   ngOnInit(): void {
@@ -61,9 +63,10 @@ export class AuthorsComponent implements OnInit {
       if (cancel && cancel === true) {
         console.log('CLOSED');
       } else {
-        this.authorsService.saveAuthors(result).subscribe((data) => {
-          this.getAuthors();
-        });
+        this.authorsService.saveAuthors(result).subscribe(
+          (data) => this.getAuthors(),
+          (error) => this.toastr.error('Não foi possível salvar os dados. Tente novamente!'),
+        )
       }
     });
   }

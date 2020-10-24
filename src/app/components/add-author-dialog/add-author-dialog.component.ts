@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { FormGroup, FormControl, FormArray } from '@angular/forms';
 import { MatStepper } from '@angular/material/stepper';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-add-author-dialog',
@@ -9,15 +10,15 @@ import { MatStepper } from '@angular/material/stepper';
   styleUrls: ['./add-author-dialog.component.scss']
 })
 export class AddAuthorDialogComponent implements OnInit {
-
   @ViewChild('stepper') stepper: MatStepper;
   authorsCount: number = 0;
   authorForm: FormArray = new FormArray([]);
 
-  constructor(private dialogRef: MatDialogRef<AddAuthorDialogComponent>) { }
+  constructor(
+    private dialogRef: MatDialogRef<AddAuthorDialogComponent>,
+    private toastr: ToastrService) {}
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   close() {
     this.dialogRef.close({ cancel: true });
@@ -28,24 +29,49 @@ export class AddAuthorDialogComponent implements OnInit {
 
     switch (stepIndex) {
       case 0:
-          for (let index = 0; index < this.authorsCount; index++) {
-            this.authorForm.push(new FormControl(''));
+          if (!this.authorsCount || this.authorsCount === 0) {
+            this.toastr.warning('Especifique quantos autores serão cadastrados!');
+            return;
           }
 
-          this.stepper.next();
+        this.authorForm.clear();
+
+        for (let index = 0; index < this.authorsCount; index++) {
+          this.authorForm.push(new FormControl(''));
+        }
+
+        this.stepper.next();
         break;
       case 1:
-          this.stepper.next();
+          const authorsValue = this.authorForm.value as { [key: string]: string };
+          const hasEmptyValues = Object.values(authorsValue).some((value) => !value);
+
+          if (hasEmptyValues) {
+            this.toastr.warning('Preencha o nome de todos os autores!');
+            return;
+          }
+
+        this.stepper.next();
         break;
       case 2:
-          const formValue = this.authorForm.value as { [key: string]: string };
-          const authors = Object.values(formValue).map((value) => ({ name: value}));
+        const formValue = this.authorForm.value as { [key: string]: string };
+        const authors = Object.values(formValue).map(value => ({
+          name: value
+        }));
 
-          this.dialogRef.close(authors);
+        this.dialogRef.close(authors);
         break;
       default:
-          this.stepper.next();
+        this.stepper.next();
         break;
+    }
+  }
+
+  previousStep() {
+    const stepIndex = this.stepper.selectedIndex;
+
+    if (stepIndex > 0) {
+      this.stepper.previous();
     }
   }
 }
