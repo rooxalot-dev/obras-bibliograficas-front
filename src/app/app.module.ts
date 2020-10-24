@@ -9,6 +9,10 @@ import { MainHeaderComponent } from './components/main-header/main-header.compon
 import { SideMenuComponent } from './components/side-menu/side-menu.component';
 import { HomeComponent } from './pages/home/home.component';
 import { AuthorsComponent } from './pages/authors/authors.component';
+import { AddAuthorDialogComponent } from './components/add-author-dialog/add-author-dialog.component';
+import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { AuthorService } from './services/author.service';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -16,16 +20,22 @@ import { AuthorsComponent } from './pages/authors/authors.component';
     MainHeaderComponent,
     SideMenuComponent,
     HomeComponent,
-    AuthorsComponent
+    AuthorsComponent,
+    AddAuthorDialogComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     BrowserAnimationsModule,
+    FormsModule,
+    ReactiveFormsModule,
+    HttpClientModule,
     AppRoutingModule,
     AngularMaterialModule,
   ],
-  providers: [],
+  providers: [
+    AuthorService,
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
